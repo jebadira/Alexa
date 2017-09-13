@@ -10,12 +10,12 @@ const languageStrings = {
     'en': {
         translation: {
             SKILL_NAME: 'Campaign App',
-            WELCOME_MESSAGE: "Welcome to %s. You can ask a question like, what\'s the goal? ... Now, what can I help you with?",
+            WELCOME_MESSAGE: "Welcome to %s. You can ask a question like, what is Campaign <say-as interpret-as='characters'>ASU</say-as> 20 20, or what is the goal of the campaign, I can even tell you our current progress toward goal ... Now, what can I help you with?",
             WELCOME_REPROMPT: 'For instructions on what you can say, please say help me.',
             DISPLAY_CARD_TITLE: '%s  - Recipe for %s.',
-            HELP_MESSAGE: "You can ask questions such as, what\'s the goal, what\'s the current campaign progress, what is the current progress for the Law school, or, you can say stop...Now, what can I help you with?",
-            HELP_REPROMPT:  "You can ask questions such as, what\'s the goal, what\'s the current campaign progress, what is the current progress for the Law school, or, you can say stop...Now, what can I help you with?",
-            STOP_MESSAGE: 'Peace!',
+            HELP_MESSAGE: "You can ask a question like, what is Campaign <say-as interpret-as='characters'>ASU</say-as> 20 20, or what is the goal of the campaign, I can even tell you our current progress toward goal ... Now, what can I help you with?",
+            HELP_REPROMPT:  "You can ask a question like, what is Campaign <say-as interpret-as='characters'>ASU</say-as> 20 20, or what is the goal of the campaign, I can even tell you our current progress toward goal ... Now, what can I help you with?",
+            STOP_MESSAGE: 'You\'re welcome. Together our potential is limitless!',
             RECIPE_REPEAT_MESSAGE: 'Try saying repeat.',
             NOT_SURE : "Sorry, I did not catch that.  Could you ask your question again?"
         },
@@ -33,69 +33,34 @@ const handlers = {
         this.emit(':ask', this.attributes.speechOutput, this.attributes.repromptSpeech);
     },
     'GoalNumber': function () {
-            var closure = this;
-            var finalData = '';
-            var amount = '';
-            var reponse = "";
             var askagain = "What else would you like to know ? ";
-            
-            getmydata({}, (data) =>{
-                console.log(closure.event.request.intent.slots.School);
-                if(closure.event.request.intent.slots.School && closure.event.request.intent.slots.School.value){
-                    console.log(data);
-                    console.log(closure.event.request.intent.slots.School);
-                    console.log(closure.event.request.intent.slots.School.resolutions);
-                    console.log(closure.event.request.intent.slots.School.resolutions.resolutionsPerAuthority[0].values);
-                    var search = closure.event.request.intent.slots.School.resolutions.resolutionsPerAuthority[0].values[0].value.id;
-                    
-                    switch(search){
-                        case "LW":
-                            amount = "$" + data['entity']['LW']['ALL']['goalExact'];
-                            response = "The Sandra Day O' Connor College of Law campaign goal is currently " + amount; 
-                            closure.emit(":ask", response, askagain);
-                        break;
-                        default:
-                        closure.emit(":ask", closure.t("NOT_SURE"), closure.t("WELCOME_REPROMPT"));
-                        break;
-                    }
-                }else{
-                    amount = "$" + data['entity']['ALL']['ALL']['goalExact'];
-                    var response = "Our campaign overall goal is "  + amount;
-                    closure.emit(":ask", response, askagain);
-                }
-            });
+            var response = "The goal of the Campaign <say-as interpret-as='characters'>ASU</say-as> 20 20 is <prosody volume='loud'>  at least</prosody> <break /> $1.5B";
+            this.emit(":ask", response, askagain);
     },
     'ProgressNumber': function () {
             var closure = this;
-            var finalData = '';
             var amount = '';
-            var reponse = "";
             var askagain = "What else would you like to know ? ";
             
             getmydata({}, (data) =>{
-                 if(closure.event.request.intent.slots.School && closure.event.request.intent.slots.School.value){
-                    console.log(data);
-                    console.log(closure.event.request.intent.slots.School);
-                    console.log(closure.event.request.intent.slots.School.resolutions);
-                    console.log(closure.event.request.intent.slots.School.resolutions.resolutionsPerAuthority[0].values);
-                    var search = closure.event.request.intent.slots.School.resolutions.resolutionsPerAuthority[0].values[0].value.id;
-                    
-                    switch(search){
-                        case "LW":
-                            amount = "$" + data['entity']['LW']["ALL"]['progressExact'];
-                            response = "The Sandra Day O' Connor College of Law campaign is currently at " + amount; 
-                            closure.emit(":ask", response, askagain);
-                        break;
-                        default:
-                        closure.emit(":ask", closure.t("NOT_SURE"), closure.t("WELCOME_REPROMPT"));
-                        break;
-                    }
-                }else{
-                    amount = "$" + data['entity']['ALL']['ALL']['progressExact'];
-                    var response = "Our campaign overall is at "  + amount;
-                    closure.emit(":ask", response, askagain);
-                }
+                var percent = data['entity']['ALL']['ALL']['percentage'] + "%";
+                amount = "$" + data['entity']['ALL']['ALL']['progressExact'];
+                var response = "The current progress is " + amount + " and " + percent + " to goal.";
+                closure.emit(":ask", response, askagain);
             });
+    },
+    'Information' : function(){
+        this.emit(":ask", 
+        "Campaign <say-as interpret-as='characters'>ASU</say-as> 20 20 is a strategic effort that focuses the entire university’s development energies on one goal <break strength='x-strong'  /> to permanently raise the long-term fundraising capacity of the university.",
+         this.attributes.repromptSpeech)
+    },
+    "CampaignLaunch" : function(){
+        this.emit(':ask', 
+        "The public launch of Campaign <say-as interpret-as='characters'>ASU</say-as> 20 20 was <say-as interpret-as='date' format='mdy'>01 26 2017</say-as>",
+        this.attributes.repromptSpeech);
+    },
+    'ThankYou':  function(){
+        this.emit("SessionEndedRequest");
     },
     'AMAZON.HelpIntent': function () {
         this.attributes.speechOutput = this.t('HELP_MESSAGE');
@@ -106,6 +71,7 @@ const handlers = {
         this.emit(':ask', this.attributes.speechOutput, this.attributes.repromptSpeech);
     },
     'AMAZON.StopIntent': function () {
+    
         this.emit('SessionEndedRequest');
     },
     'AMAZON.CancelIntent': function () {
