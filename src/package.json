@@ -1,0 +1,22 @@
+{
+  "name": "alexa-asu-demo",
+  "version": "1.0.0",
+  "description": "alexa demo ",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://ASUAlexaDeployment@alexaasudemo.scm.azurewebsites.net:443/AlexaASUDemo.git"
+  },
+  "author": "JonDavid Ebadirad",
+  "license": "ISC",
+  "dependencies": {
+    "alexa-sdk": "^1.0.13",
+    "ftp": "^0.3.10",
+    "ftp-client": "^0.2.2",
+    "ftp-get": "^0.3.1",
+    "request": "^2.81.0"
+  }
+}
